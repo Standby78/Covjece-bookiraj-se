@@ -1,9 +1,8 @@
 import React from "react";
 
-const Dice = () => {
-
+const Dice = ({ handler }) => {
     return (
-        <div className="dice-container">
+        <div onClick={() => handler()} className="dice-container">
             <div className="dice">
                 <ol className="die-list even-roll" data-roll="1" id="die-1">
                     <li className="die-item" data-side="1">
