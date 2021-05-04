@@ -44,4 +44,4 @@ const Dice = ({ handler }) => {
     );
 };
 
-export default Dice;
+export { Dice };

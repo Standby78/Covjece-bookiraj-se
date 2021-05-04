@@ -1,4 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
+
+import Tile from './Tile'
 import playerImg from "../../../static/img/player.png";
 import { PLAYER_SIZE, TILES } from "../../constants/";
 
@@ -44,12 +46,12 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
                         height={`${PLAYER_SIZE}px`}
                         width={`${PLAYER_SIZE}px`}
                         x={
-                            tilesPositions[playerPosition]?.position?.x -
+                            tilesPositions[playerPosition].position?.x -
                             PLAYER_SIZE / 2 +
                             2
                         }
                         y={
-                            tilesPositions[playerPosition]?.position.y -
+                            tilesPositions[playerPosition].position.y -
                             PLAYER_SIZE / 2 -
                             6
                         }
@@ -61,43 +63,7 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
 
     const tiles = tilesPositions.map((pos, index) => {
         const color = index % 10;
-        return (
-            <g key={`key-${index}`} className="g-tiles">
-                <circle
-                    key={`tile-${index}`}
-                    cx={pos.position.x}
-                    cy={pos.position.y}
-                    r="15"
-                    stroke="black"
-                    strokeWidth="3"
-                    fill={color === 0 ? "green" : "red"}
-                    filter="url(#f009)"
-                ></circle>
-                {color === 0 && (
-                    <text
-                        x={pos.position.x}
-                        y={pos.position.y + 4}
-                        textAnchor="middle"
-                        filter="url(#f009)"
-                        fontSize=".5em"
-                    >
-                        START
-                    </text>
-                )}
-                {color !== 0 && pos.isTrap && (
-                    <text
-                        className="trap"
-                        x={pos.position.x}
-                        y={pos.position.y + 6}
-                        textAnchor="middle"
-                        filter="url(#f009)"
-                        fontSize="1em"
-                    >
-                        ?
-                    </text>
-                )}
-            </g>
-        );
+        return <Tile key={`key-${index}`} color={color} pos={pos} />
     });
 
     return (
@@ -126,7 +92,7 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
                 {tiles}
                 {player}
                 <g>
-                <text
+                    <text
                         x="82%"
                         y="50%"
                         textAnchor="middle"
@@ -159,4 +125,4 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
     );
 };
 
-export default Board;
+export { Board };

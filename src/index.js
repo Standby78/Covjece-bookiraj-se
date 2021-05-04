@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import Board from "./components/Board/Board";
-import Dice from "./components/Dice/Dice";
-import Modal from "./components/Modal/Modal";
+import { ModalElement, Board, Dice } from './components';
+import { MSG } from "./constants/";
 
+console.log(Board)
 const TILES = 40;
 
 const rollDice = () => {
@@ -48,6 +48,14 @@ const Home = () => {
         if (playerPosition >= TILES - 1) setGameActive(false);
     }, [playerPosition]);
 
+    let randomIndex = null;
+    let modalMessage = null;
+
+    if(isModalOpen) {
+        randomIndex = Math.floor(Math.random() * MSG.length);
+        modalMessage = MSG[randomIndex];
+    }
+
     return (
         <div className="board-container">
             <Dice handler={handlerUpKey} />
@@ -62,29 +70,33 @@ const Home = () => {
                     MULTIPLAYER
                 </button>
             </div>
-            <Modal
+            <ModalElement
                 isOpen={isModalOpen}
                 modalHandler={setIsModalOpen}
-                gameOver={false}
-            />
-            {!gameActive && (
-                <Modal
-                    isOpen={true}
-                    modalHandler={setIsModalOpen}
-                    gameOver={true}
-                    steps={steps}
-                />
-            )}
-            {multiplayerVisible && (
-                <Modal
-                    isOpen={true}
-                    modalHandler={setIsModalOpen}
-                    gameOver={false}
-                    steps={steps}
-                    multiplayer={true}
-                    multiplayerHandler={setMultiplayerVisible}
-                />
-            )}
+            >
+                {gameActive && !multiplayerVisible && (
+                    <div>
+                        <h2>STAO SI NA ZAMKU!</h2>
+                        <h3>{modalMessage?.title}</h3>
+                        {modalMessage?.msg}
+                    </div>
+                )}
+                {!gameActive && (
+                    <div>
+                        <h2>GAME OVER!!</h2>
+                        Čestitamo! Uspio si se bookirati koristeći minimalan
+                        broj pokušaja! Sati na koje si to utrošio: SAMO{" "}
+                        {steps}!<p>Sad još samo moraš nekako saznati gdje da bookiraš TE sate.</p>
+                        <p>Refresh za novu igru...</p>
+                    </div>
+                )}
+                {multiplayerVisible && (
+                    <div>
+                        <h3>MULTIPLAYER!?!</h3>
+                        Ugasili smo multiplayer jer se ekipa stalno igrala , pa se nisu imali gdje bookirati!
+                    </div>
+                )}
+            </ModalElement>
         </div>
     );
 };
