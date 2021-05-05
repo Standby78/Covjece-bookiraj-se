@@ -19,35 +19,31 @@ const toggleClasses = (die) => {
 };
 
 const Home = () => {
-    const [playerPosition, setPlayerPosition] = useState(0);
-    const [roll, setRoll] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState({visible: false, multiplayer: false});
-    const [steps, setSteps] = useState(0);
-    const [gameActive, setGameActive] = useState(true);
+    const [game, setGame] = useState({steps: 0, active: true, rolling: true, playerPosition: 0})
 
     const handlerUpKey = () => {
         setIsModalOpen({visible: false});
-        if (gameActive && roll) {
-            setRoll(false);
+        if (game.active && game.rolling) {
+            setGame(state => ({...state, rolling: false}));
             const newRoll = rollDice();
             const newPosition =
-                playerPosition + newRoll < TILES - 1
-                    ? playerPosition + newRoll
+                game.playerPosition + newRoll < TILES - 1
+                    ? game.playerPosition + newRoll
                     : TILES - 1;
             setTimeout(() => {
-                setPlayerPosition(newPosition);
-                setRoll(true);
+                setGame(prevState => ({...prevState, rolling: true, playerPosition: newPosition}));
             }, 1.5 * 1000);
-            setSteps(steps + 1);
+            setGame(prevState => ({...prevState, steps: prevState.steps + 1}));
         }
     };
 
     useEffect(() => {
-        if (playerPosition >= TILES - 1) {
-            setGameActive(false);
+        if (game.playerPosition >= TILES - 1 && game.active) {
+            setGame(prevState => ({...prevState, active: false}));
             setIsModalOpen({ visible: true});
         }
-    }, [playerPosition]);
+    }, [game]);
 
     let randomIndex = null;
     let modalMessage = null;
@@ -62,8 +58,8 @@ const Home = () => {
             <Dice handler={handlerUpKey} />
             <Board
                 handler={handlerUpKey}
-                position={playerPosition}
-                setPositionHandler={setPlayerPosition}
+                position={game.playerPosition}
+                setPositionHandler={setGame}
                 malusHandler={setIsModalOpen}
             />
             <div className="multiplayer-container">
@@ -78,18 +74,18 @@ const Home = () => {
                 </button>
             </div>
             <ModalElement isOpen={isModalOpen.visible} modalHandler={setIsModalOpen}>
-                {gameActive && !isModalOpen.multiplayer && (
+                {game.active && !isModalOpen.multiplayer && (
                     <div>
                         <h2>STAO SI NA ZAMKU!</h2>
                         <h3>{modalMessage?.title}</h3>
                         {modalMessage?.msg}
                     </div>
                 )}
-                {!gameActive && (
+                {!game.active && (
                     <div>
                         <h2>GAME OVER!!</h2>
                         Čestitamo! Uspio si se bookirati koristeći minimalan
-                        broj pokušaja! Sati na koje si to utrošio: SAMO {steps}!
+                        broj pokušaja! Sati na koje si to utrošio: SAMO {game.steps}!
                         <p>
                             Sad još samo moraš nekako saznati gdje da bookiraš
                             TE sate.

@@ -32,7 +32,7 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
         if (tilesPositions[position]?.isTrap) {
             const malus = Math.floor(Math.random() * 6) + 3;
             const newPosition = position - malus > 0 ? position - malus : 0;
-            setPositionHandler(newPosition);
+            setPositionHandler(prevState => ({...prevState, playerPosition: newPosition}));
             malusHandler({ visible: true });
         }
     }, [position]);
