@@ -1,4 +1,15 @@
-export const MSG = [
+export const MSG_positive = [
+    {
+        title: "Bookiraš se redovito!?",
+        msg: "Bravo! Kanboard ti je zahvalan jer barem tebi ne mora slati Knock Knock mail, te nitko iz HRa te ne mora loviti po grupama na Skypeu da bi ti obračunali plaću na kraju mjeseca!",
+    },
+    {
+        title: "Kanboard ti je draži od Jire?",
+        msg: "Utrošio si vrijeme da naučiš sve što ti je potrebno iz Kanboarda, i sad hejtaš jer se prelazi na novi alat? Lijepo od tebe, ali join the club. Ipak, nećemo te kazniti skakutanjima unazad."
+    }
+]
+
+export const MSG_negative = [
     {
         title: "Nestalo ti je struje kući!",
         msg: "NE! Ne možeš se bookirati na IP_Administration, vrati se nazad!",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { ModalElement, Board, Dice } from "./components";
-import { MSG } from "./constants/";
+import { MSG_negative, MSG_positive } from "./constants/";
 
 const TILES = 40;
 
@@ -19,38 +19,54 @@ const toggleClasses = (die) => {
 };
 
 const Home = () => {
-    const [isModalOpen, setIsModalOpen] = useState({visible: false, multiplayer: false});
-    const [game, setGame] = useState({steps: 0, active: true, rolling: true, playerPosition: 0})
+    const [isModalOpen, setIsModalOpen] = useState({
+        visible: false,
+        multiplayer: false,
+        isMsgPositive: false,
+    });
+    const [game, setGame] = useState({
+        steps: 0,
+        active: true,
+        rolling: true,
+        playerPosition: 0,
+    });
 
+    const MSG = [MSG_negative, MSG_positive];
     const handlerUpKey = () => {
-        setIsModalOpen({visible: false});
+        setIsModalOpen({ visible: false });
         if (game.active && game.rolling) {
-            setGame(state => ({...state, rolling: false}));
+            setGame((state) => ({ ...state, rolling: false }));
             const newRoll = rollDice();
             const newPosition =
                 game.playerPosition + newRoll < TILES - 1
                     ? game.playerPosition + newRoll
                     : TILES - 1;
             setTimeout(() => {
-                setGame(prevState => ({...prevState, rolling: true, playerPosition: newPosition}));
+                setGame((prevState) => ({
+                    ...prevState,
+                    rolling: true,
+                    playerPosition: newPosition,
+                }));
             }, 1.5 * 1000);
-            setGame(prevState => ({...prevState, steps: prevState.steps + 1}));
+            setGame((prevState) => ({
+                ...prevState,
+                steps: prevState.steps + 1,
+            }));
         }
     };
 
     useEffect(() => {
         if (game.playerPosition >= TILES - 1 && game.active) {
-            setGame(prevState => ({...prevState, active: false}));
-            setIsModalOpen({ visible: true});
+            setGame((prevState) => ({ ...prevState, active: false }));
+            setIsModalOpen({ visible: true });
         }
     }, [game]);
 
-    let randomIndex = null;
     let modalMessage = null;
-
-    if (isModalOpen.visible) {
-        randomIndex = Math.floor(Math.random() * MSG.length);
-        modalMessage = MSG[randomIndex];
+    if (isModalOpen.visible && game.active) {
+        const message = MSG[isModalOpen.isMsgPositive];
+        const randomIndex = Math.floor(Math.random() * message.length);
+        modalMessage = message[randomIndex];
     }
 
     return (
@@ -66,14 +82,18 @@ const Home = () => {
                 <button
                     onClick={() => {
                         // setMultiplayerVisible(true);
-                        setIsModalOpen({visible: true, multiplayer: true});
+                        setIsModalOpen({ visible: true, multiplayer: true });
                     }}
                     className="multiplayer"
                 >
                     MULTIPLAYER
                 </button>
             </div>
-            <ModalElement isOpen={isModalOpen.visible} modalHandler={setIsModalOpen}>
+            <ModalElement
+                isPositive={isModalOpen.isMsgPositive}
+                isOpen={isModalOpen.visible}
+                modalHandler={setIsModalOpen}
+            >
                 {game.active && !isModalOpen.multiplayer && (
                     <div>
                         <h2>STAO SI NA ZAMKU!</h2>
@@ -85,7 +105,8 @@ const Home = () => {
                     <div>
                         <h2>GAME OVER!!</h2>
                         Čestitamo! Uspio si se bookirati koristeći minimalan
-                        broj pokušaja! Sati na koje si to utrošio: SAMO {game.steps}!
+                        broj pokušaja! Sati na koje si to utrošio: SAMO{" "}
+                        {game.steps}!
                         <p>
                             Sad još samo moraš nekako saznati gdje da bookiraš
                             TE sate.

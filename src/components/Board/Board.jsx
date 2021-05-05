@@ -22,7 +22,9 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
                 isTrap:
                     i === TILES - 1
                         ? false
-                        : Math.round(Math.random() * 2) === 2,
+                        : i % 10 > 0
+                        ? Math.round(Math.random() * 3) >= 2
+                        : false,
             });
         }
         setTilesPositions(positions);
@@ -30,10 +32,14 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
 
     useEffect(() => {
         if (tilesPositions[position]?.isTrap) {
-            const malus = Math.floor(Math.random() * 6) + 3;
+            const isMsgPositive = +(Math.round(Math.random() * 3) * 3 === 3);
+            const malus = isMsgPositive ? 0 : Math.floor(Math.random() * 6) + 3;
             const newPosition = position - malus > 0 ? position - malus : 0;
-            setPositionHandler(prevState => ({...prevState, playerPosition: newPosition}));
-            malusHandler({ visible: true });
+            setPositionHandler((prevState) => ({
+                ...prevState,
+                playerPosition: newPosition,
+            }));
+            malusHandler({ visible: true, isMsgPositive });
         }
     }, [position]);
 
