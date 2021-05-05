@@ -19,7 +19,7 @@ const customStyles = {
 
 const ModalElement = ({ isOpen, modalHandler, children }) => {
     const closeModal = () => {
-        modalHandler(false);
+        modalHandler({ visible: false, multiplayer: false });
     };
     return (
         <div>

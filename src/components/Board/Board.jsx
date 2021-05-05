@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 
-import Tile from './Tile'
+import Tile from "./Tile";
 import playerImg from "../../../static/img/player.png";
 import { PLAYER_SIZE, TILES } from "../../constants/";
 
@@ -33,7 +33,7 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
             const malus = Math.floor(Math.random() * 6) + 3;
             const newPosition = position - malus > 0 ? position - malus : 0;
             setPositionHandler(newPosition);
-            malusHandler(true);
+            malusHandler({ visible: true });
         }
     }, [position]);
 
@@ -63,7 +63,7 @@ const Board = ({ position, setPositionHandler, malusHandler, handler }) => {
 
     const tiles = tilesPositions.map((pos, index) => {
         const color = index % 10;
-        return <Tile key={`key-${index}`} color={color} pos={pos} />
+        return <Tile key={`key-${index}`} color={color} pos={pos} />;
     });
 
     return (

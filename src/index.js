@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
-import { ModalElement, Board, Dice } from './components';
+import { ModalElement, Board, Dice } from "./components";
 import { MSG } from "./constants/";
 
-console.log(Board)
 const TILES = 40;
 
 const rollDice = () => {
@@ -22,19 +21,18 @@ const toggleClasses = (die) => {
 const Home = () => {
     const [playerPosition, setPlayerPosition] = useState(0);
     const [roll, setRoll] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState({visible: false, multiplayer: false});
     const [steps, setSteps] = useState(0);
     const [gameActive, setGameActive] = useState(true);
-    const [multiplayerVisible, setMultiplayerVisible] = useState(false);
 
     const handlerUpKey = () => {
-        setIsModalOpen(false);
+        setIsModalOpen({visible: false});
         if (gameActive && roll) {
             setRoll(false);
-            const roll = rollDice();
+            const newRoll = rollDice();
             const newPosition =
-                playerPosition + roll < TILES - 1
-                    ? playerPosition + roll
+                playerPosition + newRoll < TILES - 1
+                    ? playerPosition + newRoll
                     : TILES - 1;
             setTimeout(() => {
                 setPlayerPosition(newPosition);
@@ -45,13 +43,16 @@ const Home = () => {
     };
 
     useEffect(() => {
-        if (playerPosition >= TILES - 1) setGameActive(false);
+        if (playerPosition >= TILES - 1) {
+            setGameActive(false);
+            setIsModalOpen({ visible: true});
+        }
     }, [playerPosition]);
 
     let randomIndex = null;
     let modalMessage = null;
 
-    if(isModalOpen) {
+    if (isModalOpen.visible) {
         randomIndex = Math.floor(Math.random() * MSG.length);
         modalMessage = MSG[randomIndex];
     }
@@ -65,16 +66,19 @@ const Home = () => {
                 setPositionHandler={setPlayerPosition}
                 malusHandler={setIsModalOpen}
             />
-            <div className="multiplayer-container" >
-                <button onClick={() => setMultiplayerVisible(true)} className="multiplayer">
+            <div className="multiplayer-container">
+                <button
+                    onClick={() => {
+                        // setMultiplayerVisible(true);
+                        setIsModalOpen({visible: true, multiplayer: true});
+                    }}
+                    className="multiplayer"
+                >
                     MULTIPLAYER
                 </button>
             </div>
-            <ModalElement
-                isOpen={isModalOpen}
-                modalHandler={setIsModalOpen}
-            >
-                {gameActive && !multiplayerVisible && (
+            <ModalElement isOpen={isModalOpen.visible} modalHandler={setIsModalOpen}>
+                {gameActive && !isModalOpen.multiplayer && (
                     <div>
                         <h2>STAO SI NA ZAMKU!</h2>
                         <h3>{modalMessage?.title}</h3>
@@ -85,15 +89,19 @@ const Home = () => {
                     <div>
                         <h2>GAME OVER!!</h2>
                         Čestitamo! Uspio si se bookirati koristeći minimalan
-                        broj pokušaja! Sati na koje si to utrošio: SAMO{" "}
-                        {steps}!<p>Sad još samo moraš nekako saznati gdje da bookiraš TE sate.</p>
+                        broj pokušaja! Sati na koje si to utrošio: SAMO {steps}!
+                        <p>
+                            Sad još samo moraš nekako saznati gdje da bookiraš
+                            TE sate.
+                        </p>
                         <p>Refresh za novu igru...</p>
                     </div>
                 )}
-                {multiplayerVisible && (
+                {isModalOpen.multiplayer && (
                     <div>
                         <h3>MULTIPLAYER!?!</h3>
-                        Ugasili smo multiplayer jer se ekipa stalno igrala , pa se nisu imali gdje bookirati!
+                        Ugasili smo multiplayer jer se ekipa stalno igrala , pa
+                        se nisu imali gdje bookirati!
                     </div>
                 )}
             </ModalElement>
