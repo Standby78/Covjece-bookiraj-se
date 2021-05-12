@@ -63,7 +63,7 @@ const Home = () => {
     }, [game]);
 
     let modalMessage = null;
-    if (isModalOpen.visible && game.active) {
+    if (isModalOpen.visible && !isModalOpen.multiplayer && game.active) {
         const message = MSG[isModalOpen.isMsgPositive];
         const randomIndex = Math.floor(Math.random() * message.length);
         modalMessage = message[randomIndex];
